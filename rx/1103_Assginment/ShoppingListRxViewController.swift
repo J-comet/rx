@@ -24,19 +24,41 @@ final class ShoppingListRxViewController: UIViewController {
         return view
     }()
     
-    private var datas = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l"]
+    let searchBar = UISearchBar()
+    
+    private var datas = [String]()
     private lazy var items = BehaviorSubject(value: self.datas)
     
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
+        navigationItem.titleView = searchBar
         configureHierarchy()
         configureLayout()
-        bind()
+        collectionViewBind()
+        searchBarBind()
     }
     
-    private func bind() {
+    private func searchBarBind() {
+        
+        searchBar
+            .rx.searchButtonClicked
+            .withLatestFrom(searchBar.rx.text.orEmpty) { void, text in
+                return text
+            }
+            .subscribe(with: self, onNext: { owner, value in
+                print("searchBar 클릭 - \(value)")
+                owner.datas.insert(value, at: 0)
+                owner.items.onNext(owner.datas)
+                owner.searchBar.resignFirstResponder()
+                owner.searchBar.text = nil
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func collectionViewBind() {
         
         items
             .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.identifier, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
@@ -50,6 +72,14 @@ final class ShoppingListRxViewController: UIViewController {
             .map { SelectShoppingItem(index: $0.item, Item: $1) }
             .subscribe(with: self) { owner, selectedItem in
                 print(selectedItem)
+            }
+            .disposed(by: disposeBag)
+        
+        // 스크롤시 소프트키보드 hide
+        collectionView.rx
+            .contentOffset
+            .subscribe(with: self) { owner, _ in
+                owner.searchBar.resignFirstResponder()
             }
             .disposed(by: disposeBag)
         
@@ -76,7 +106,7 @@ final class ShoppingListRxViewController: UIViewController {
     
     private func configureLayout() {
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
