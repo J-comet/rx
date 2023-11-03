@@ -54,7 +54,7 @@ final class ShoppingListRxViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.title = "쇼핑 목록"
-
+        
         configureHierarchy()
         configureLayout()
         collectionViewBind()
@@ -83,7 +83,7 @@ final class ShoppingListRxViewController: UIViewController {
         
         shoppingItems
             .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.identifier, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
-                                
+                
                 // 완료 기능
                 cell.completeButton.rx
                     .tap
@@ -124,6 +124,18 @@ final class ShoppingListRxViewController: UIViewController {
                 // 상세페이지로 이동해서 수정기능 만들기
                 let vc = DetailShoppingRxViewController()
                 vc.shoppingItem = selectedItem.1
+                
+                vc.completionHandler = { [weak self] updateItem in
+                    guard let updateItem, let self else { return }
+                    self.datas.enumerated().forEach { index, item in
+                        if updateItem.idx == item.idx {
+                            print(updateItem)
+                            self.datas[index] = updateItem
+                        }
+                    }
+                    self.shoppingItems.onNext(self.datas)
+                }
+                
                 owner.navigationController?.pushViewController(vc, animated: true)
             }
             .disposed(by: disposeBag)
@@ -137,21 +149,21 @@ final class ShoppingListRxViewController: UIViewController {
             .disposed(by: disposeBag)
         
         
-//        // cell 의 데이터가 필요할 때
-//        collectionView.rx
-//            .modelSelected(String.self)
-//            .subscribe(with: self, onNext: { owner, value in
-//                print("modelSelected - ", value)
-//            })
-//            .disposed(by: disposeBag)
-//        
-//        // cell 의 indexPath 가 필요할 때
-//        collectionView.rx
-//            .itemSelected
-//            .subscribe(with: self) { owner, indexPath in
-//                print("itemSelected", indexPath)
-//            }
-//            .disposed(by: disposeBag)
+        //        // cell 의 데이터가 필요할 때
+        //        collectionView.rx
+        //            .modelSelected(String.self)
+        //            .subscribe(with: self, onNext: { owner, value in
+        //                print("modelSelected - ", value)
+        //            })
+        //            .disposed(by: disposeBag)
+        //
+        //        // cell 의 indexPath 가 필요할 때
+        //        collectionView.rx
+        //            .itemSelected
+        //            .subscribe(with: self) { owner, indexPath in
+        //                print("itemSelected", indexPath)
+        //            }
+        //            .disposed(by: disposeBag)
     }
     
     private func configureHierarchy() {
@@ -179,7 +191,6 @@ final class ShoppingListRxViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
-    
 }
 
 extension ShoppingListRxViewController {
