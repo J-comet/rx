@@ -11,9 +11,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-struct SelectShoppingItem {
-    let index: Int
-    let Item: String
+struct ShoppingItem {
+    let idx = UUID().uuidString
+    var name: String
+    var isComplete = false
+    var isBookmark = false
 }
 
 final class ShoppingListRxViewController: UIViewController {
@@ -43,8 +45,8 @@ final class ShoppingListRxViewController: UIViewController {
         return view
     }()
     
-    private var datas = [String]()
-    private lazy var items = BehaviorSubject(value: self.datas)
+    private var datas = [ShoppingItem]()
+    private lazy var shoppingItems = BehaviorSubject(value: self.datas)
     
     let disposeBag = DisposeBag()
     
@@ -63,11 +65,12 @@ final class ShoppingListRxViewController: UIViewController {
         addButton.rx
             .tap
             .withLatestFrom(addTextField.rx.text.orEmpty)
-            .subscribe(with: self) { owner, text in
-                if !text.isEmpty {
-                    print(text, "입력됨")
-                    owner.datas.insert(text, at: 0)
-                    owner.items.onNext(owner.datas)
+            .subscribe(with: self) { owner, inputText in
+                if !inputText.isEmpty {
+                    print(inputText, "입력됨")
+                    let item = ShoppingItem(name: inputText)
+                    owner.datas.insert(item, at: 0)
+                    owner.shoppingItems.onNext(owner.datas)
                     owner.addTextField.resignFirstResponder()
                     owner.addTextField.text = nil
                 }
@@ -77,18 +80,47 @@ final class ShoppingListRxViewController: UIViewController {
     
     private func collectionViewBind() {
         
-        items
+        shoppingItems
             .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.identifier, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
+                                
+                // 완료 기능
+                cell.completeButton.rx
+                    .tap
+                    .subscribe(with: self) { owner, _ in
+                        var updateItem = owner.datas[row]
+                        updateItem.isComplete = !updateItem.isComplete
+                        owner.datas.enumerated().forEach { index, item in
+                            if item.idx == updateItem.idx {
+                                owner.datas[index] = updateItem
+                            }
+                        }
+                        owner.shoppingItems.onNext(owner.datas)
+                    }
+                    .disposed(by: cell.disposeBag)  // cell 의 다운로드 버튼이기에 cell의 disposeBag 을 사용
+                
+                // 북마크 기능
+                cell.bookmarkButton.rx
+                    .tap
+                    .subscribe(with: self) { owner, _ in
+                        var updateItem = owner.datas[row]
+                        updateItem.isBookmark = !updateItem.isBookmark
+                        owner.datas.enumerated().forEach { index, item in
+                            if item.idx == updateItem.idx {
+                                owner.datas[index] = updateItem
+                            }
+                        }
+                        owner.shoppingItems.onNext(owner.datas)
+                    }
+                    .disposed(by: cell.disposeBag)
+                
                 cell.configureCell(row: element)
             }
             .disposed(by: disposeBag)
         
         // collectionView - didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
         Observable.zip(collectionView.rx.itemSelected, collectionView.rx.modelSelected(String.self))
-//            .map { "셀 선택 \($0), \($1)" }
-            .map { SelectShoppingItem(index: $0.item, Item: $1) }
             .subscribe(with: self) { owner, selectedItem in
-                print(selectedItem)
+                print(selectedItem.1)
             }
             .disposed(by: disposeBag)
         
@@ -99,6 +131,7 @@ final class ShoppingListRxViewController: UIViewController {
                 owner.addTextField.resignFirstResponder()
             }
             .disposed(by: disposeBag)
+        
         
 //        // cell 의 데이터가 필요할 때
 //        collectionView.rx
@@ -153,7 +186,7 @@ extension ShoppingListRxViewController {
         let count: CGFloat = 1
         let width: CGFloat = UIScreen.main.bounds.width - (spacing * (count + 1)) // 디바이스 너비 계산
         
-        layout.itemSize = CGSize(width: width / count, height: 70)
+        layout.itemSize = CGSize(width: width / count, height: 60)
         layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)  // 컨텐츠가 잘리지 않고 자연스럽게 표시되도록 여백설정
         layout.minimumLineSpacing = spacing         // 셀과셀 위 아래 최소 간격
         layout.minimumInteritemSpacing = spacing    // 셀과셀 좌 우 최소 간격
