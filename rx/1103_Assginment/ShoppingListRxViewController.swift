@@ -11,22 +11,63 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+struct SelectShoppingItem {
+    let index: Int
+    let Item: String
+}
+
 final class ShoppingListRxViewController: UIViewController {
     
     lazy var collectionView = {
         let view = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
-        view.dataSource = self
-        view.delegate = self
         view.register(ShoppingCollectionViewCell.self, forCellWithReuseIdentifier: ShoppingCollectionViewCell.identifier)
         return view
     }()
     
-    private let items = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l"]
+    private var datas = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l"]
+    private lazy var items = BehaviorSubject(value: self.datas)
+    
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
+        bind()
+    }
+    
+    private func bind() {
+        
+        items
+            .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.identifier, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
+                cell.configureCell(row: element)
+            }
+            .disposed(by: disposeBag)
+        
+        // collectionView - didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
+        Observable.zip(collectionView.rx.itemSelected, collectionView.rx.modelSelected(String.self))
+//            .map { "셀 선택 \($0), \($1)" }
+            .map { SelectShoppingItem(index: $0.item, Item: $1) }
+            .subscribe(with: self) { owner, selectedItem in
+                print(selectedItem)
+            }
+            .disposed(by: disposeBag)
+        
+//        // cell 의 데이터가 필요할 때
+//        collectionView.rx
+//            .modelSelected(String.self)
+//            .subscribe(with: self, onNext: { owner, value in
+//                print("modelSelected - ", value)
+//            })
+//            .disposed(by: disposeBag)
+//        
+//        // cell 의 indexPath 가 필요할 때
+//        collectionView.rx
+//            .itemSelected
+//            .subscribe(with: self) { owner, indexPath in
+//                print("itemSelected", indexPath)
+//            }
+//            .disposed(by: disposeBag)
     }
     
     private func configureHierarchy() {
@@ -39,26 +80,6 @@ final class ShoppingListRxViewController: UIViewController {
         }
     }
     
-}
-
-extension ShoppingListRxViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingCollectionViewCell.identifier, for: indexPath) as? ShoppingCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        let item = items[indexPath.item]
-        cell.configureCell(row: item)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(items[indexPath.item])
-    }
 }
 
 extension ShoppingListRxViewController {
@@ -75,5 +96,5 @@ extension ShoppingListRxViewController {
         layout.minimumInteritemSpacing = spacing    // 셀과셀 좌 우 최소 간격
         return layout
     }
-
+    
 }
