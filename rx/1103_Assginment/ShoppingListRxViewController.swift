@@ -24,7 +24,24 @@ final class ShoppingListRxViewController: UIViewController {
         return view
     }()
     
-    let searchBar = UISearchBar()
+    let addTextField = {
+        let view = UITextField()
+        view.placeholder = "추가할 아이템을 입력해보세요"
+        return view
+    }()
+    
+    let addButton = {
+        let view = UIButton()
+        var attString = AttributedString("추가")
+        attString.font = .systemFont(ofSize: 14, weight: .medium)
+        var config = UIButton.Configuration.filled()
+        config.attributedTitle = attString
+        config.contentInsets = .init(top: 8, leading: 20, bottom: 8, trailing: 20)
+        config.baseBackgroundColor = .lightGray
+        config.baseForegroundColor = .black
+        view.configuration = config
+        return view
+    }()
     
     private var datas = [String]()
     private lazy var items = BehaviorSubject(value: self.datas)
@@ -34,27 +51,27 @@ final class ShoppingListRxViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationItem.titleView = searchBar
+
         configureHierarchy()
         configureLayout()
         collectionViewBind()
-        searchBarBind()
+        addButtonBind()
     }
     
-    private func searchBarBind() {
+    private func addButtonBind() {
         
-        searchBar
-            .rx.searchButtonClicked
-            .withLatestFrom(searchBar.rx.text.orEmpty) { void, text in
-                return text
+        addButton.rx
+            .tap
+            .withLatestFrom(addTextField.rx.text.orEmpty)
+            .subscribe(with: self) { owner, text in
+                if !text.isEmpty {
+                    print(text, "입력됨")
+                    owner.datas.insert(text, at: 0)
+                    owner.items.onNext(owner.datas)
+                    owner.addTextField.resignFirstResponder()
+                    owner.addTextField.text = nil
+                }
             }
-            .subscribe(with: self, onNext: { owner, value in
-                print("searchBar 클릭 - \(value)")
-                owner.datas.insert(value, at: 0)
-                owner.items.onNext(owner.datas)
-                owner.searchBar.resignFirstResponder()
-                owner.searchBar.text = nil
-            })
             .disposed(by: disposeBag)
     }
     
@@ -79,7 +96,7 @@ final class ShoppingListRxViewController: UIViewController {
         collectionView.rx
             .contentOffset
             .subscribe(with: self) { owner, _ in
-                owner.searchBar.resignFirstResponder()
+                owner.addTextField.resignFirstResponder()
             }
             .disposed(by: disposeBag)
         
@@ -101,12 +118,28 @@ final class ShoppingListRxViewController: UIViewController {
     }
     
     private func configureHierarchy() {
+        view.addSubview(addTextField)
+        view.addSubview(addButton)
         view.addSubview(collectionView)
     }
     
     private func configureLayout() {
+        
+        addTextField.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+            make.height.equalTo(50)
+            make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        addButton.snp.makeConstraints { make in
+            make.centerY.equalTo(addTextField)
+            make.trailing.equalToSuperview().inset(16)
+        }
+        
         collectionView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(addButton.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
