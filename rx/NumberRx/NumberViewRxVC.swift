@@ -24,17 +24,17 @@ final class NumberViewRxVC: UIViewController {
         super.viewDidLoad()
 
         viewModel.subjectNumber01
-            .map { String($0) }
+            .map { $0.description }
             .bind(to: number1.rx.text)
             .disposed(by: viewModel.disposeBag)
 
         viewModel.subjectNumber02
-            .map { String($0) }
+            .map { $0.description }
             .bind(to: number2.rx.text)
             .disposed(by: viewModel.disposeBag)
         
         viewModel.subjectNumber03
-            .map { String($0) }
+            .map { $0.description }
             .bind(to: number3.rx.text)
             .disposed(by: viewModel.disposeBag)
         

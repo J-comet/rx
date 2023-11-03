@@ -17,6 +17,8 @@
 		C01674262AF3B3B500373ADA /* NumberRxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01674252AF3B3B500373ADA /* NumberRxViewModel.swift */; };
 		C01674292AF3B41400373ADA /* SimpleValidationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01674282AF3B41400373ADA /* SimpleValidationVC.swift */; };
 		C016742B2AF3B42F00373ADA /* SimpleValidationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C016742A2AF3B42F00373ADA /* SimpleValidationViewModel.swift */; };
+		C05047282AF4EC16006B77EC /* DetailShoppingRxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05047272AF4EC16006B77EC /* DetailShoppingRxViewController.swift */; };
+		C050472A2AF4EC47006B77EC /* DetailShoppingRxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05047292AF4EC47006B77EC /* DetailShoppingRxViewModel.swift */; };
 		C05E059B2AF155E0005E3E66 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05E059A2AF155E0005E3E66 /* AppDelegate.swift */; };
 		C05E059D2AF155E0005E3E66 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05E059C2AF155E0005E3E66 /* SceneDelegate.swift */; };
 		C05E059F2AF155E0005E3E66 /* SimplePickerViewRXVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05E059E2AF155E0005E3E66 /* SimplePickerViewRXVC.swift */; };
@@ -38,6 +40,8 @@
 		C01674252AF3B3B500373ADA /* NumberRxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberRxViewModel.swift; sourceTree = "<group>"; };
 		C01674282AF3B41400373ADA /* SimpleValidationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleValidationVC.swift; sourceTree = "<group>"; };
 		C016742A2AF3B42F00373ADA /* SimpleValidationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleValidationViewModel.swift; sourceTree = "<group>"; };
+		C05047272AF4EC16006B77EC /* DetailShoppingRxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailShoppingRxViewController.swift; sourceTree = "<group>"; };
+		C05047292AF4EC47006B77EC /* DetailShoppingRxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailShoppingRxViewModel.swift; sourceTree = "<group>"; };
 		C05E05972AF155E0005E3E66 /* rx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rx.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C05E059A2AF155E0005E3E66 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C05E059C2AF155E0005E3E66 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,11 +70,29 @@
 		C00324492AF4B1CF002EDC19 /* 1103_Assginment */ = {
 			isa = PBXGroup;
 			children = (
+				C00324542AF4EBB0002EDC19 /* ShoppingDetail */,
+				C00324532AF4EBA2002EDC19 /* ShoppingMain */,
+			);
+			path = 1103_Assginment;
+			sourceTree = "<group>";
+		};
+		C00324532AF4EBA2002EDC19 /* ShoppingMain */ = {
+			isa = PBXGroup;
+			children = (
 				C003244A2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift */,
 				C003244C2AF4B225002EDC19 /* ShoppingListRxViewModel.swift */,
 				C00324512AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift */,
 			);
-			path = 1103_Assginment;
+			path = ShoppingMain;
+			sourceTree = "<group>";
+		};
+		C00324542AF4EBB0002EDC19 /* ShoppingDetail */ = {
+			isa = PBXGroup;
+			children = (
+				C05047272AF4EC16006B77EC /* DetailShoppingRxViewController.swift */,
+				C05047292AF4EC47006B77EC /* DetailShoppingRxViewModel.swift */,
+			);
+			path = ShoppingDetail;
 			sourceTree = "<group>";
 		};
 		C016741C2AF3B03C00373ADA /* SimpleTableRx */ = {
@@ -227,6 +249,7 @@
 				C01674292AF3B41400373ADA /* SimpleValidationVC.swift in Sources */,
 				C00324522AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift in Sources */,
 				C003244B2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift in Sources */,
+				C050472A2AF4EC47006B77EC /* DetailShoppingRxViewModel.swift in Sources */,
 				C01674262AF3B3B500373ADA /* NumberRxViewModel.swift in Sources */,
 				C05E05B42AF15718005E3E66 /* SimpleTableRXVC.swift in Sources */,
 				C05E059B2AF155E0005E3E66 /* AppDelegate.swift in Sources */,
@@ -234,6 +257,7 @@
 				C01674242AF3B37600373ADA /* NumberViewRxVC.swift in Sources */,
 				C05E059D2AF155E0005E3E66 /* SceneDelegate.swift in Sources */,
 				C01674212AF3B12E00373ADA /* SimplePickerRxViewModel.swift in Sources */,
+				C05047282AF4EC16006B77EC /* DetailShoppingRxViewController.swift in Sources */,
 				C016741E2AF3B05600373ADA /* SimpleTableRxViewModel.swift in Sources */,
 				C016742B2AF3B42F00373ADA /* SimpleValidationViewModel.swift in Sources */,
 			);

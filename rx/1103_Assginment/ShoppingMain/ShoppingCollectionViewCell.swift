@@ -36,6 +36,12 @@ final class ShoppingCollectionViewCell: UICollectionViewCell {
     
     var disposeBag = DisposeBag()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 메모리 해제
+        disposeBag = DisposeBag()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()

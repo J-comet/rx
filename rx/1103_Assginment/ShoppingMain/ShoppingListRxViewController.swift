@@ -53,6 +53,7 @@ final class ShoppingListRxViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.title = "쇼핑 목록"
 
         configureHierarchy()
         configureLayout()
@@ -118,9 +119,12 @@ final class ShoppingListRxViewController: UIViewController {
             .disposed(by: disposeBag)
         
         // collectionView - didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
-        Observable.zip(collectionView.rx.itemSelected, collectionView.rx.modelSelected(String.self))
+        Observable.zip(collectionView.rx.itemSelected, collectionView.rx.modelSelected(ShoppingItem.self))
             .subscribe(with: self) { owner, selectedItem in
-                print(selectedItem.1)
+                // 상세페이지로 이동해서 수정기능 만들기
+                let vc = DetailShoppingRxViewController()
+                vc.shoppingItem = selectedItem.1
+                owner.navigationController?.pushViewController(vc, animated: true)
             }
             .disposed(by: disposeBag)
         
