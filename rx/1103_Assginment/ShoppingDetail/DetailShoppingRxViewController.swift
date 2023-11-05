@@ -14,7 +14,6 @@ import RxCocoa
 final class DetailShoppingRxViewController: UIViewController {
     
     var shoppingItem: ShoppingItem?
-    
     var completionHandler: ((ShoppingItem?) -> Void)?
     
     let nameTextField = {
@@ -39,45 +38,49 @@ final class DetailShoppingRxViewController: UIViewController {
         return view
     }()
     
-    var disposeBag = DisposeBag()
-    
-    let shoppingItemName = PublishSubject<String>()
+    let viewModel = DetailShoppingRxViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.title = "상세 아이템"
         
-        guard let shoppingItem else { return }
         configureHierarchy()
         configureLayout()
         bind()
-        shoppingItemName.onNext(shoppingItem.name)
+        guard let shoppingItem else { return }
+        viewModel.name.onNext(shoppingItem.name)
     }
     
     private func bind() {
         
-        // TODO: 현재 textField 를 한번도 입력하지 않으면 수정 버튼을 눌렀을 때 데이터가 없다고 뜨는 중 원인 파악 필요
-        shoppingItemName
+        viewModel.name
             .bind(to: nameTextField.rx.text)
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
+        
+        nameTextField.rx
+            .text
+            .orEmpty
+            .subscribe(with: self) { owner, text in
+                owner.viewModel.name.onNext(text)
+            }
+            .disposed(by: viewModel.disposeBag)
         
         // 수정버튼 탭 했을 때 dismiss 및 클로저 전달
         editButton.rx
             .tap
-            .withLatestFrom(nameTextField.rx.text.orEmpty)
+            .withLatestFrom(viewModel.name)
             .subscribe(with: self) { owner, text in
                 if text.isEmpty {
-                    print("입력 데이터 없음")
+                    print("입력값 수정")
                 } else {
-                    print("입력값 - ", text)
                     var updateItem = owner.shoppingItem
                     updateItem?.name = text
                     owner.completionHandler?(updateItem)
                     owner.navigationController?.popViewController(animated: true)
                 }
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
     }
     
     private func configureHierarchy() {

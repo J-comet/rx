@@ -11,5 +11,8 @@ import RxSwift
 import RxCocoa
 
 final class DetailShoppingRxViewModel {
+
+    let name = BehaviorSubject(value: "")
+    var disposeBag = DisposeBag()
     
 }
