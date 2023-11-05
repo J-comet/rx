@@ -11,5 +11,8 @@ import RxSwift
 import RxCocoa
 
 final class ShoppingListRxViewModel {
+    var datas = [ShoppingItem]()
+    lazy var shoppingItems = BehaviorSubject(value: self.datas)
     
+    let disposeBag = DisposeBag()
 }

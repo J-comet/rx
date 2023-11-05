@@ -48,10 +48,7 @@ final class ShoppingListRxViewController: UIViewController {
         return view
     }()
     
-    private var datas = [ShoppingItem]()
-    private lazy var shoppingItems = BehaviorSubject(value: self.datas)
-    
-    let disposeBag = DisposeBag()
+    let viewModel = ShoppingListRxViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,32 +70,32 @@ final class ShoppingListRxViewController: UIViewController {
                 if !inputText.isEmpty {
                     print(inputText, "입력됨")
                     let item = ShoppingItem(name: inputText)
-                    owner.datas.insert(item, at: 0)
-                    owner.shoppingItems.onNext(owner.datas)
+                    owner.viewModel.datas.insert(item, at: 0)
+                    owner.viewModel.shoppingItems.onNext(owner.viewModel.datas)
                     owner.addTextField.resignFirstResponder()
                     owner.addTextField.text = nil
                 }
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
     }
     
     private func collectionViewBind() {
         
-        shoppingItems
+        viewModel.shoppingItems
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.identifier, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
                 
                 // 완료 기능
                 cell.completeButton.rx
                     .tap
                     .subscribe(with: self) { owner, _ in
-                        var updateItem = owner.datas[row]
+                        var updateItem = owner.viewModel.datas[row]
                         updateItem.isComplete = !updateItem.isComplete
-                        owner.datas.enumerated().forEach { index, item in
+                        owner.viewModel.datas.enumerated().forEach { index, item in
                             if item.idx == updateItem.idx {
-                                owner.datas[index] = updateItem
+                                owner.viewModel.datas[index] = updateItem
                             }
                         }
-                        owner.shoppingItems.onNext(owner.datas)
+                        owner.viewModel.shoppingItems.onNext(owner.viewModel.datas)
                     }
                     .disposed(by: cell.disposeBag)  // cell 의 다운로드 버튼이기에 cell의 disposeBag 을 사용
                 
@@ -106,20 +103,20 @@ final class ShoppingListRxViewController: UIViewController {
                 cell.bookmarkButton.rx
                     .tap
                     .subscribe(with: self) { owner, _ in
-                        var updateItem = owner.datas[row]
+                        var updateItem = owner.viewModel.datas[row]
                         updateItem.isBookmark = !updateItem.isBookmark
-                        owner.datas.enumerated().forEach { index, item in
+                        owner.viewModel.datas.enumerated().forEach { index, item in
                             if item.idx == updateItem.idx {
-                                owner.datas[index] = updateItem
+                                owner.viewModel.datas[index] = updateItem
                             }
                         }
-                        owner.shoppingItems.onNext(owner.datas)
+                        owner.viewModel.shoppingItems.onNext(owner.viewModel.datas)
                     }
                     .disposed(by: cell.disposeBag)
-                
                 cell.configureCell(row: element)
+                
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
         
         // didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(ShoppingItem.self))
@@ -130,26 +127,26 @@ final class ShoppingListRxViewController: UIViewController {
                 
                 vc.completionHandler = { [weak self] updateItem in
                     guard let updateItem, let self else { return }
-                    self.datas.enumerated().forEach { index, item in
+                    self.viewModel.datas.enumerated().forEach { index, item in
                         if updateItem.idx == item.idx {
                             print(updateItem)
-                            self.datas[index] = updateItem
+                            self.viewModel.datas[index] = updateItem
                         }
                     }
-                    self.shoppingItems.onNext(self.datas)
+                    self.viewModel.shoppingItems.onNext(self.viewModel.datas)
                 }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
         
         tableView.rx
             .itemDeleted
             .subscribe(with: self) { owner, indexPath in
-                owner.datas.remove(at: indexPath.row)
-                owner.shoppingItems.onNext(owner.datas)
+                owner.viewModel.datas.remove(at: indexPath.row)
+                owner.viewModel.shoppingItems.onNext(owner.viewModel.datas)
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
         
         // 스크롤시 소프트키보드 hide
         tableView.rx
@@ -157,7 +154,7 @@ final class ShoppingListRxViewController: UIViewController {
             .subscribe(with: self) { owner, _ in
                 owner.addTextField.resignFirstResponder()
             }
-            .disposed(by: disposeBag)
+            .disposed(by: viewModel.disposeBag)
 
     }
     

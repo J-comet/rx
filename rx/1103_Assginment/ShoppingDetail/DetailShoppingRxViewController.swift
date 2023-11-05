@@ -51,7 +51,6 @@ final class DetailShoppingRxViewController: UIViewController {
         guard let shoppingItem else { return }
         configureHierarchy()
         configureLayout()
-        
         bind()
         shoppingItemName.onNext(shoppingItem.name)
     }
