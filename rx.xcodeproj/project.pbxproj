@@ -10,7 +10,7 @@
 		C003244B2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C003244A2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift */; };
 		C003244D2AF4B225002EDC19 /* ShoppingListRxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C003244C2AF4B225002EDC19 /* ShoppingListRxViewModel.swift */; };
 		C00324502AF4B2A4002EDC19 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C003244F2AF4B2A4002EDC19 /* SnapKit */; };
-		C00324522AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00324512AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift */; };
+		C00324522AF4B3BF002EDC19 /* ShoppingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00324512AF4B3BF002EDC19 /* ShoppingTableViewCell.swift */; };
 		C016741E2AF3B05600373ADA /* SimpleTableRxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C016741D2AF3B05600373ADA /* SimpleTableRxViewModel.swift */; };
 		C01674212AF3B12E00373ADA /* SimplePickerRxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01674202AF3B12E00373ADA /* SimplePickerRxViewModel.swift */; };
 		C01674242AF3B37600373ADA /* NumberViewRxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01674232AF3B37600373ADA /* NumberViewRxVC.swift */; };
@@ -33,7 +33,7 @@
 /* Begin PBXFileReference section */
 		C003244A2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListRxViewController.swift; sourceTree = "<group>"; };
 		C003244C2AF4B225002EDC19 /* ShoppingListRxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListRxViewModel.swift; sourceTree = "<group>"; };
-		C00324512AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingCollectionViewCell.swift; sourceTree = "<group>"; };
+		C00324512AF4B3BF002EDC19 /* ShoppingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTableViewCell.swift; sourceTree = "<group>"; };
 		C016741D2AF3B05600373ADA /* SimpleTableRxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleTableRxViewModel.swift; sourceTree = "<group>"; };
 		C01674202AF3B12E00373ADA /* SimplePickerRxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePickerRxViewModel.swift; sourceTree = "<group>"; };
 		C01674232AF3B37600373ADA /* NumberViewRxVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberViewRxVC.swift; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 			children = (
 				C003244A2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift */,
 				C003244C2AF4B225002EDC19 /* ShoppingListRxViewModel.swift */,
-				C00324512AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift */,
+				C00324512AF4B3BF002EDC19 /* ShoppingTableViewCell.swift */,
 			);
 			path = ShoppingMain;
 			sourceTree = "<group>";
@@ -247,7 +247,7 @@
 			files = (
 				C05E059F2AF155E0005E3E66 /* SimplePickerViewRXVC.swift in Sources */,
 				C01674292AF3B41400373ADA /* SimpleValidationVC.swift in Sources */,
-				C00324522AF4B3BF002EDC19 /* ShoppingCollectionViewCell.swift in Sources */,
+				C00324522AF4B3BF002EDC19 /* ShoppingTableViewCell.swift in Sources */,
 				C003244B2AF4B1EF002EDC19 /* ShoppingListRxViewController.swift in Sources */,
 				C050472A2AF4EC47006B77EC /* DetailShoppingRxViewModel.swift in Sources */,
 				C01674262AF3B3B500373ADA /* NumberRxViewModel.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  ShoppingCollectionViewCell.swift
+//  ShoppingTableViewCell.swift
 //  rx
 //
 //  Created by 장혜성 on 2023/11/03.
@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class ShoppingCollectionViewCell: UICollectionViewCell {
+final class ShoppingTableViewCell: UITableViewCell {
     
     static let identifier = "ShoppingCollectionViewCell"
     
@@ -41,11 +41,13 @@ final class ShoppingCollectionViewCell: UICollectionViewCell {
         // 메모리 해제
         disposeBag = DisposeBag()
     }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         configureHierarchy()
         configureLayout()
+
     }
     
     required init?(coder: NSCoder) {

@@ -20,9 +20,12 @@ struct ShoppingItem {
 
 final class ShoppingListRxViewController: UIViewController {
     
-    lazy var collectionView = {
-        let view = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
-        view.register(ShoppingCollectionViewCell.self, forCellWithReuseIdentifier: ShoppingCollectionViewCell.identifier)
+    private let tableView: UITableView = {
+        let view = UITableView()
+        view.register(ShoppingTableViewCell.self, forCellReuseIdentifier: ShoppingTableViewCell.identifier)
+        view.backgroundColor = .white
+        view.rowHeight = 60
+        view.separatorStyle = .none
         return view
     }()
     
@@ -82,7 +85,7 @@ final class ShoppingListRxViewController: UIViewController {
     private func collectionViewBind() {
         
         shoppingItems
-            .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.identifier, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
+            .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.identifier, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
                 
                 // 완료 기능
                 cell.completeButton.rx
@@ -118,8 +121,8 @@ final class ShoppingListRxViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        // collectionView - didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
-        Observable.zip(collectionView.rx.itemSelected, collectionView.rx.modelSelected(ShoppingItem.self))
+        // didSelectItemAt 과 같은 역할을 하기 위해서는 modelSelected + itemSelected 를 같이 사용해야됨.
+        Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(ShoppingItem.self))
             .subscribe(with: self) { owner, selectedItem in
                 // 상세페이지로 이동해서 수정기능 만들기
                 let vc = DetailShoppingRxViewController()
@@ -140,36 +143,29 @@ final class ShoppingListRxViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
+        tableView.rx
+            .itemDeleted
+            .subscribe(with: self) { owner, indexPath in
+                owner.datas.remove(at: indexPath.row)
+                owner.shoppingItems.onNext(owner.datas)
+            }
+            .disposed(by: disposeBag)
+        
         // 스크롤시 소프트키보드 hide
-        collectionView.rx
+        tableView.rx
             .contentOffset
             .subscribe(with: self) { owner, _ in
                 owner.addTextField.resignFirstResponder()
             }
             .disposed(by: disposeBag)
-        
-        
-        //        // cell 의 데이터가 필요할 때
-        //        collectionView.rx
-        //            .modelSelected(String.self)
-        //            .subscribe(with: self, onNext: { owner, value in
-        //                print("modelSelected - ", value)
-        //            })
-        //            .disposed(by: disposeBag)
-        //
-        //        // cell 의 indexPath 가 필요할 때
-        //        collectionView.rx
-        //            .itemSelected
-        //            .subscribe(with: self) { owner, indexPath in
-        //                print("itemSelected", indexPath)
-        //            }
-        //            .disposed(by: disposeBag)
+
     }
     
     private func configureHierarchy() {
         view.addSubview(addTextField)
         view.addSubview(addButton)
-        view.addSubview(collectionView)
+        view.addSubview(tableView)
+        
     }
     
     private func configureLayout() {
@@ -185,27 +181,10 @@ final class ShoppingListRxViewController: UIViewController {
             make.trailing.equalToSuperview().inset(16)
         }
         
-        collectionView.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in
             make.top.equalTo(addButton.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
-}
-
-extension ShoppingListRxViewController {
-    
-    func collectionViewLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewFlowLayout()
-        let spacing: CGFloat = 8
-        let count: CGFloat = 1
-        let width: CGFloat = UIScreen.main.bounds.width - (spacing * (count + 1)) // 디바이스 너비 계산
-        
-        layout.itemSize = CGSize(width: width / count, height: 60)
-        layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)  // 컨텐츠가 잘리지 않고 자연스럽게 표시되도록 여백설정
-        layout.minimumLineSpacing = spacing         // 셀과셀 위 아래 최소 간격
-        layout.minimumInteritemSpacing = spacing    // 셀과셀 좌 우 최소 간격
-        return layout
-    }
-    
 }
